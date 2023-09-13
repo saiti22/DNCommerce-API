@@ -1,0 +1,23 @@
+//GET ALL
+GET http://localhost:3000/estoque
+
+###
+POST http://localhost:3000/usuario
+Content-Type: application/json
+
+{
+    "nome": "Gnar",
+    "email": "gnarlol@gmail.com",
+    "senha": "chubichubi"
+}
+
+###
+DELETE http://localhost:3000/usuario/3
+
+###
+PATCH http://localhost:3000/estoque/dim/1
+Content-Type: application/json
+
+{
+    "quantidade": 450
+}
