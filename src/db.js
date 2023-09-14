@@ -154,6 +154,116 @@ const deleteProduto = async (id) => {
     `, [id])
 }
 
+// AINDA NÃO SEI SE TRECHO ABAIXO É NECESSÁRIO
+// //ADD PRODUTO
+// const adicionaProduto = async (id_pedido, id_produto) => {
+//     const addProduto = await pool.query(`
+//         INSERT INTO pedidos_produtos (id_pedidos, id_produtos)
+//         VALUES (?, ?)
+//     `, [id_pedido, id_produto])
+//     return produto
+// }
+
+// //SUB PRODUTO
+// const retirarProduto = async (id_pedido, id_produto) => {
+//     const subProduto = await pool.query(`
+//         DELETE FROM pedidos_produtos
+//         WHERE id_pedidos = ?
+//             AND id_produtos = ?
+//     `, [id_pedido, id_produto])
+// }
+
+//PEDIDO
+//GET ALL
+const getPedidos = async () => {
+    const [rows] = await pool.query(`
+        SELECT usuarios.nome as cliente, pedidos.id as id_pedido, produtos.id as id_produto, produtos.nome, produtos.descricao, produtos.valor, pedidos.pago
+        FROM produtos  
+        INNER JOIN pedidos_produtos ON produtos.id = pedidos_produtos.id_produtos 
+        INNER jOIN pedidos ON pedidos.id = pedidos_produtos.id_pedidos
+        INNER JOIN usuarios on pedidos.id_clientes = usuarios.id
+    `)
+    return rows
+}
+
+//GET ONE
+const getPedidoId = async (id) => {
+    const [rows] = await pool.query(`
+        SELECT usuarios.nome as cliente, pedidos.id as id_pedido, produtos.id as id_produto, produtos.nome, produtos.descricao, produtos.valor, pedidos.pago
+        FROM produtos  
+        INNER JOIN pedidos_produtos ON produtos.id = pedidos_produtos.id_produtos 
+        INNER jOIN pedidos ON pedidos.id = pedidos_produtos.id_pedidos
+        INNER JOIN usuarios on pedidos.id_clientes = usuarios.id
+        WHERE pedidos.id = ?
+    `, [id])
+    return rows
+}
+
+const getPedidoCliente = async (id) => {
+    const [rows] = await pool.query(`
+        SELECT usuarios.nome as cliente, pedidos.id as id_pedido, produtos.id as id_produto, produtos.nome, produtos.descricao, produtos.valor, pedidos.pago
+        FROM produtos  
+        INNER JOIN pedidos_produtos ON produtos.id = pedidos_produtos.id_produtos 
+        INNER jOIN pedidos ON pedidos.id = pedidos_produtos.id_pedidos
+        INNER JOIN usuarios on pedidos.id_clientes = usuarios.id
+        WHERE usuarios.id = ?
+    `, [id])
+    return rows
+}
+
+//CREATE ONE
+const createPedido = async (id_cliente, id_produto, quantidade_produto) => {
+    const [pedido] = await pool.query(`
+        INSERT INTO pedidos (id_cliente)
+        VALUES (?)
+    `, [id_cliente])
+    const id_pedido = pedido.insertId
+    for (let i = 0; i < quantidade_produto; i++) {
+        createPedidos_Produtos(id_pedido, id_produto)        
+    }
+}
+
+//DELETE ONE
+const deletePedido = async (id_pedido) => {
+    await pool.query(`
+        DELETE FROM pedidos
+        WHERE id = ?
+    `,[id_pedido])
+    deletePedidos_Produtos(id_pedido)
+}
+
+//FINALIZA PEDIDO/COMPRA
+const finalizaPedido = async (id_pedido) => {
+    await pool.query(`
+        UPDATE pedidos (pago)
+        values (true)
+        WHERE id = ?
+    `, [id_pedido])
+    createVenda(id_pedido)
+}
+
+
+const createPedidos_Produtos = async (id_pedido, id_produto) => {
+    const pedido_produto = await pool.query(`
+        INSERT INTO pedidos_produtos (id_pedidos, id_produtos)
+        VALUES (?, ?)
+    `, [id_pedido, id_produto])
+}
+
+const deletePedidos_Produtos = async (id_pedido) => {
+    await pool.query(`
+        DELETE FROM pedidos_produtos
+        WHERE id_pedidos = ?
+    `, [id_pedido])
+}
+
+const createVenda = async (id_pedido) => {
+    await pool.query(`
+        INSERT INTO vendas (id_pedidos)
+        VALUES (?)
+    `, [id_pedido])
+}
+
 
 module.exports = { getUsuario, getUsuarios, createUsuario, updateUsuario, deleteUsuario }
 module.exports = { getTodosEstoque, getUmEstoque, createEstoque, diminuiEstoque, aumentaEstoque }
