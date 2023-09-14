@@ -268,3 +268,4 @@ const createVenda = async (id_pedido) => {
 module.exports = { getUsuario, getUsuarios, createUsuario, updateUsuario, deleteUsuario }
 module.exports = { getTodosEstoque, getUmEstoque, createEstoque, diminuiEstoque, aumentaEstoque }
 module.exports = { getProduto, getProdutos, createProduto, updateProduto, deleteProduto }
+module.exports = { getPedidos, getPedidoId, getPedidoCliente, createPedido, deletePedido, finalizaPedido }
