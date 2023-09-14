@@ -15,9 +15,13 @@ router.get('/', async (req, res) => {
 
 //getting one
 router.get('/:id', async (req, res) => {
-    const id = req.params.id
-    const usuario = await getUsuario(id)
-    res.send(usuario)
+    try {
+        const id = req.params.id
+        const usuario = await getUsuario(id)
+        res.send(usuario)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }    
 })
 
 //creating one

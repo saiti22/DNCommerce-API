@@ -74,6 +74,16 @@ const getUmEstoque = async (id) =>{
     return row[0]
 }
 
+//CREATE ONE
+const createEstoque = async (id_produto, quantidade) => {
+    const [result] = await pool.query(`
+        INSERT INTO estoque (id_produto, quantidade )
+        VALUES (?, ?)
+    `, [id_produto, quantidade])
+    const id = result.insertId
+    return getUmEstoque(id)
+}
+
 //UPDATE ONE
 const diminuiEstoque = async (id, quantidade) => {
     await pool.query(`
@@ -115,19 +125,20 @@ const getProduto = async (id) => {
 }
 
 //CREATE ONE
-const createProduto = async (nome, descricao, valor) => {
+const createProduto = async (nome, descricao, valor, quantidade) => {
     const [result] = await pool.query(`
-        INSERT INTO usuarios (nome, descricao, valor)
+        INSERT INTO produtos (nome, descricao, valor)
         VALUES (?, ?, ?)
     `, [nome, descricao, valor])
     const id = result.insertId
+    createEstoque(id, quantidade)
     return getProduto(id)
 }
 
 //UPDATE ONE
 const updateProduto = async (nome, descricao, valor, id) => {
     await pool.query(`
-        UPDATE usuarios
+        UPDATE produtos
         SET nome = ?,
             descricao = ?,
             valor = ?
@@ -138,11 +149,12 @@ const updateProduto = async (nome, descricao, valor, id) => {
 //DELETE ONE
 const deleteProduto = async (id) => {
     await pool.query(`
-        DELETE FROM usuarios
+        DELETE FROM produtos
         where id = ?
     `, [id])
 }
 
 
-module.exports = {getUsuario, getUsuarios, createUsuario, updateUsuario, deleteUsuario}
-module.exports = {getTodosEstoque, getUmEstoque, diminuiEstoque, aumentaEstoque}
+module.exports = { getUsuario, getUsuarios, createUsuario, updateUsuario, deleteUsuario }
+module.exports = { getTodosEstoque, getUmEstoque, createEstoque, diminuiEstoque, aumentaEstoque }
+module.exports = { getProduto, getProdutos, createProduto, updateProduto, deleteProduto }

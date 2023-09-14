@@ -18,6 +18,8 @@ const userRouter = require('./routes/usuario')
 app.use('/usuario', userRouter)
 const estoqueRouter = require('./routes/estoque')
 app.use('/estoque', estoqueRouter)
+const produtoRouter = require('./routes/produto')
+app.use('/produto', produtoRouter)
 
 
 app.listen(process.env.PORT, () => console.log(`Server Started | http://localhost/${process.env.PORT}`))
